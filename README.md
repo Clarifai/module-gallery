@@ -29,3 +29,11 @@ whenever the API gets updated, this library follows it.
 The third version number (`Z` out of `X.Y.Z`) is used by this library for any independent releases of library-specific improvements and bug fixes.
 
 ## Getting started
+
+After installation you just need to run the streamlit app:
+```cmd
+streamlit run app.py
+```
+
+Then find your user_id, app_id and personal access token and put them into the following parts of the url below in your browser:
+http://localhost:8501?user_id={user_id}&app_id={app_id}&pat={pat}
