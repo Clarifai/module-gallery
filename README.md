@@ -12,7 +12,7 @@ This is a test streamlit app with  the official Clarifai Python utilities. This 
 
 ## Installation
 
-First install the clarifai-utils package. [Instructions here](https://github.com/Clarifai/clarifai-utils).
+First install the [clarifai-utils](https://github.com/Clarifai/clarifai-utils) package following these [instructions](https://github.com/Clarifai/clarifai-utils#installation).
 
 Then git clone and setup this repo:
 ```cmd
@@ -29,3 +29,13 @@ whenever the API gets updated, this library follows it.
 The third version number (`Z` out of `X.Y.Z`) is used by this library for any independent releases of library-specific improvements and bug fixes.
 
 ## Getting started
+
+After installation you just need to run the streamlit app:
+```cmd
+streamlit run app.py
+```
+
+Find your user_id [here](https://portal.clarifai.com/settings/authentication), app_id (of whatever app you want to interact with in your account) and personal access token [here](https://portal.clarifai.com/settings/authentication). 
+
+Put them into the following parts of the url below in your browser:
+http://localhost:8501?user_id={user_id}&app_id={app_id}&pat={pat}
