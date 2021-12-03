@@ -4,6 +4,7 @@ import urllib.request
 
 import numpy as np
 from PIL import Image
+from stqdm import stqdm
 
 
 def crop_image(img):
@@ -55,7 +56,7 @@ def average_colour(image):
   return tuple(colour_tuple)
 
 
-def urls_to_mosaic(st, url_list):
+def urls_to_mosaic(url_list):
 
   count = 0
 
@@ -65,7 +66,7 @@ def urls_to_mosaic(st, url_list):
 
   print(url_list)
 
-  PIL_cropped = download_urls(st, urls_shuf)
+  PIL_cropped = download_urls(urls_shuf)
 
   # attempt to mosaic
   img_list = []
@@ -96,22 +97,19 @@ def urls_to_mosaic(st, url_list):
   return np.array(mosaic)
 
 
-def download_urls(st, url_list):
-  st.text("Downloading inputs")
-  my_bar = st.progress(0.0)
+def download_urls(url_list):
   PIL_concept_images = []
-  for i, url in enumerate(url_list):
+  for i, url in stqdm(enumerate(url_list), desc="Downloading images"):
     #   try:
     with urllib.request.urlopen(url) as fd:
       im = Image.open(fd)
     PIL_concept_images.append(im)
     #   except:
     #     continue
-    my_bar.progress((float(i) + 1) / float(len(url_list)))
 
   # crop
   PIL_cropped = []
-  for each in PIL_concept_images:
+  for each in stqdm(PIL_concept_images, desc="Pre-processing images"):
     each = crop_image(each)
     each.thumbnail((100, 100))
     each = each.convert("RGB")
