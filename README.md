@@ -12,7 +12,7 @@ This is a test streamlit app with  the official Clarifai Python utilities. This 
 
 ## Installation
 
-First install the clarifai-utils package. [Instructions here](https://github.com/Clarifai/clarifai-utils).
+First install the [clarifai-utils](https://github.com/Clarifai/clarifai-utils) package following these [instructions](https://github.com/Clarifai/clarifai-utils#installation).
 
 Then git clone and setup this repo:
 ```cmd
