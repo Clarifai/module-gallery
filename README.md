@@ -35,7 +35,7 @@ After installation you just need to run the streamlit app:
 streamlit run app.py
 ```
 
-Find your user_id [here](https://portal.clarifai.com/settings/authentication), app_id (of whatever app you want to interact with in your account) and personal access token [here](https://portal.clarifai.com/settings/authentication). 
+Find your user_id [here](https://portal.clarifai.com/settings/profile), app_id (of whatever app you want to interact with in your account) and personal access token [here](https://portal.clarifai.com/settings/authentication). 
 
 Put them into the following parts of the url below in your browser:
 http://localhost:8501?user_id={user_id}&app_id={app_id}&pat={pat}
