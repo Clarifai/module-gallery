@@ -86,6 +86,14 @@ div[data-testid="stFileUploader"]>section>button:active
     border-color: transparent;
 }
 
+div[data-baseweb="base-input"] {
+    color: #4F8BF9;
+    background-color: #fff;
+    border-radius: 9.8px;
+    border-color: transparent;
+}
+
+
 footer {
     display: none !important;
     color: #FFF !important;
