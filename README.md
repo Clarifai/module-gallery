@@ -59,7 +59,19 @@ Note: in the future this page handling will likely be cleaned up as another pyth
 
 ## Using Clarifai CSS Styles
 
-This repo includes a style.css file that renders many (not all) of the streamlit widgets using Clarifai's styles. The way it works is it should be loaded (see `local_css`) at the top of your streamlit `app.py` in order to inject the styles into the rendered html page. Eventually we plan to fully host this style file and load it remotely from that url so that it's always the most up to date style file
+This repo includes a style.css file that renders many (not all) of the streamlit widgets using Clarifai's styles. The way it works is it should be loaded (see `local_css`) at the top of your streamlit `app.py` in order to inject the styles into the rendered html page. Eventually we plan to fully host this style file and load it remotely from that url so that it's always the most up to date style file. 
+
+### If you've already created an app
+
+You an copy the style.css file from this repo into your repo and then add the following code snippet to get the styles loaded on render: 
+```python
+def local_css(file_name):
+  with open(file_name) as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+
+local_css("style.css")
+```
 
 
 
