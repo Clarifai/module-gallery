@@ -33,12 +33,12 @@ page_size = 3
 
 lister = ClarifaiResourceLister(stub, metadata, auth.user_id, auth.app_id, page_size)
 
-# current_page.display()
-
 ###################
 
-# Shared API calls before anything goes
-
+# Shared API calls before any page renders. This can be used to save state for a particular browser
+# session. I'm using this here to show an example of how when the app loads we can get a value like
+# the counts of inputs, and then use it within the various pages of the multi-page app.
+# It's not clear when the session state ever gets cleared or where it is stored.
 if 'get_input_count_response' not in st.session_state:
   get_input_count_response = stub.GetInputCount(
       service_pb2.GetInputCountRequest(user_app_id=userDataObject), metadata=metadata)
