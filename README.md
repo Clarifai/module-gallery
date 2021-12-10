@@ -39,3 +39,30 @@ Find your user_id [here](https://portal.clarifai.com/settings/profile), app_id (
 
 Put them into the following parts of the url below in your browser:
 http://localhost:8501?user_id={user_id}&app_id={app_id}&pat={pat}
+
+
+### Building Single Page Apps
+For a single page app all you need to implement is the app.py file. You're of course free to import any other python modules you build but they will all be used to render that single page. A single page app will still let `page=N` come in as a query param but it will be ignored. 
+
+### Building Multi-Page Apps
+The example in this repo shows how you can build a multi-page application. `app.py` essentially looks at the `page=N` query param (where N is a number from 1 to as many pages as you decide to make) and uses that to import the `pages/page{N}.py` as a module and then call that module's `display()` function. Therefore you can implement as many pages as you like with each pages/pageN.py looking something like: 
+```python
+def display(): 
+  # streamlist stuff to be rendered on that page. 
+```
+
+An example of jumping between pages using a dropdown is also provided in `app.py`. This is just an example that might make it easier when doing local development of multi-page apps (though you can always use the page=N query param). However, when your app is integrated into the sidebar of our UIs it will receive the `page=N` query param when someone clicks on the navbar link so there is no need for the page dropdown to remain in an app mode once it's ready for production. 
+
+If `page=N` is not provided, the code defaults to `page=1`. 
+
+Note: in the future this page handling will likely be cleaned up as another python pip installable package so that we don't have to copy and paste it. 
+
+## Using Clarifai CSS Styles
+
+This repo includes a style.css file that renders many (not all) of the streamlit widgets using Clarifai's styles. The way it works is it should be loaded (see `local_css`) at the top of your streamlit `app.py` in order to inject the styles into the rendered html page. Eventually we plan to fully host this style file and load it remotely from that url so that it's always the most up to date style file
+
+
+
+
+
+
