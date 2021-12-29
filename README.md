@@ -16,8 +16,8 @@ First install the [clarifai-utils](https://github.com/Clarifai/clarifai-utils) p
 
 Then git clone and setup this repo:
 ```cmd
-git clone git@github.com:Clarifai/clarifai-mode-gallery.git
-cd clarifai-mode-gallery
+git clone git@github.com:Clarifai/clarifai-module-gallery.git
+cd clarifai-module-gallery
 pip install -r requirements.txt
 ```
 
