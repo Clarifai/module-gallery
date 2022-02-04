@@ -1,36 +1,23 @@
 import altair as alt
 import pandas as pd
 import streamlit as st
-## Import in the Clarifai gRPC based objects needed
-from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
-from clarifai_grpc.grpc.api import service_pb2_grpc
-## Import in the Clarifai gRPC based objects needed
-from clarifai_utils.auth.helper import ClarifaiAuthHelper
 from clarifai_utils.listing.lister import ClarifaiResourceLister
-## Import in the Clarifai gRPC based objects needed
 from stqdm import stqdm
 
-from utils.api_utils import concept_key, get_annotations_for_input_batch
-
-try:
-  auth = ClarifaiAuthHelper.from_streamlit_query_params(st.experimental_get_query_params())
-except:
-  auth = ClarifaiAuthHelper.from_env()
-
-# Create the clarifai grpc client.
-channel = ClarifaiChannel.get_grpc_channel(base="api.clarifai.com")
-stub = service_pb2_grpc.V2Stub(channel)
-metadata = auth.metadata
-print(metadata)
-userDataObject = auth.get_user_app_id_proto()
-print(userDataObject)
+from utils.api_utils import concept_key, get_annotations_for_input_batch, get_auth
 
 page_size = 16
 
-lister = ClarifaiResourceLister(stub, metadata, auth.user_id, auth.app_id, page_size=page_size)
-
 
 def display():
+  # This must be within the display() function.
+  auth = get_auth()
+  stub = auth.get_stub()
+  metadata = auth.metadata
+  userDataObject = auth.get_user_app_id_proto()
+  lister = ClarifaiResourceLister(stub, metadata, auth.user_id, auth.app_id, page_size=page_size)
+
+  st.title("App Data Metrics")
   with st.form(key="metrics-inputs"):
     st.text("This will compute a bunch of stats about your app. You ready?")
     submitted = st.form_submit_button('Ready')

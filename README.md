@@ -9,7 +9,6 @@ This is a test streamlit app with  the official Clarifai Python utilities. This 
 * Sign up for a free account at: https://clarifai.com/signup
 * Read the documentation at: https://docs.clarifai.com/
 
-
 ## Installation
 
 First install the [clarifai-utils](https://github.com/Clarifai/clarifai-utils) package following these [instructions](https://github.com/Clarifai/clarifai-utils#installation).
@@ -35,35 +34,41 @@ After installation you just need to run the streamlit app:
 streamlit run app.py
 ```
 
-Find your user_id [here](https://portal.clarifai.com/settings/profile), app_id (of whatever app you want to interact with in your account) and personal access token [here](https://portal.clarifai.com/settings/authentication). 
+Find your `user_id` [here](https://portal.clarifai.com/settings/profile), `app_id` (of whatever app you  want to interact with in your account), personal access token (`pat`) [here](https://portal.clarifai.com/settings/authentication), and the `base` URL for the API you're calling such as https://api-dev.clarifai.com or http://host:port for a direct Clarifai API stack.
 
 Put them into the following parts of the url below in your browser:
-http://localhost:8501?user_id={user_id}&app_id={app_id}&pat={pat}
+http://localhost:8501?user_id={user_id}&app_id={app_id}&pat={pat}=base={base}
 
 
 ### Building Single Page Apps
-For a single page app all you need to implement is the app.py file. You're of course free to import any other python modules you build but they will all be used to render that single page. A single page app will still let `page=N` come in as a query param but it will be ignored. 
+For a single page app all you need to implement is the app.py file. You're of course free to import any other python modules you build but they will all be used to render that single page. A single page app will still let `page=N` come in as a query param but it will be ignored.
 
 ### Building Multi-Page Apps
-The example in this repo shows how you can build a multi-page application. `app.py` essentially looks at the `page=N` query param (where N is a number from 1 to as many pages as you decide to make) and uses that to import the `pages/page{N}.py` as a module and then call that module's `display()` function. Therefore you can implement as many pages as you like with each pages/pageN.py looking something like: 
+The example in this repo shows how you can build a multi-page application using the ClarifaiModulePageManger from [clarifai-utils](https://github.com/Clarifai/clarifai-python-utils). `app.py` essentially looks at the `page=N` query param (where N is a string filename expected to be in the pages folder) and uses that to import the `pages/{N}.py` as a module and then call that module's `display()` function. Therefore you can implement as many pages as you like with each pages/{N}.py looking something like:
 ```python
-def display(): 
-  # streamlist stuff to be rendered on that page. 
+from utils.api_utils import get_auth
+
+def display():
+  # Get the Clarifai auth from query params.
+  auth = get_auth()
+  # Get the Clarifai API stub.
+  stub = auth.get_stub()
+
+  # streamlit stuff to be rendered on that page.
+  st.title("My New Page!")
 ```
 
-An example of jumping between pages using a dropdown is also provided in `app.py`. This is just an example that might make it easier when doing local development of multi-page apps (though you can always use the page=N query param). However, when your app is integrated into the sidebar of our UIs it will receive the `page=N` query param when someone clicks on the navbar link so there is no need for the page dropdown to remain in an app mode once it's ready for production. 
+An example of jumping between pages using a dropdown is also provided in `app.py`. This is just an example that might make it easier when doing local development of multi-page apps (though you can always use the page=N query param). However, when your app is integrated into the sidebar of our UIs it will receive the `page=N` query param when someone clicks on the navbar link so there is no need for the page dropdown to remain in an app mode once it's ready for production.
 
-If `page=N` is not provided, the code defaults to `page=1`. 
-
-Note: in the future this page handling will likely be cleaned up as another python pip installable package so that we don't have to copy and paste it. 
+If `page=N` is not provided, the code defaults to `page=1`.
 
 ## Using Clarifai CSS Styles
 
-This repo includes a style.css file that renders many (not all) of the streamlit widgets using Clarifai's styles. The way it works is it should be loaded (see `local_css`) at the top of your streamlit `app.py` in order to inject the styles into the rendered html page. Eventually we plan to fully host this style file and load it remotely from that url so that it's always the most up to date style file. 
+This repo includes a style.css file that renders many (not all) of the streamlit widgets using Clarifai's styles. The way it works is it should be loaded (see `local_css`) at the top of your streamlit `app.py` in order to inject the styles into the rendered html page. Eventually we plan to fully host this style file and load it remotely from that url so that it's always the most up to date style file.
 
 ### If you've already created an app
 
-You an copy the style.css file from this repo into your repo and then add the following code snippet to get the styles loaded on render: 
+You an copy the style.css file from this repo into your repo and then add the following code snippet to get the styles loaded on render:
 ```python
 def local_css(file_name):
   with open(file_name) as f:
@@ -72,9 +77,3 @@ def local_css(file_name):
 
 local_css("style.css")
 ```
-
-
-
-
-
-

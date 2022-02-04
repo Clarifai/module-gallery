@@ -1,33 +1,24 @@
-import glob
-import importlib
-
 import streamlit as st
 ## Import in the Clarifai gRPC based objects needed
-from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
-from clarifai_grpc.grpc.api import service_pb2, service_pb2_grpc
+from clarifai_grpc.grpc.api import service_pb2
 from clarifai_grpc.grpc.api.status import status_code_pb2
-from clarifai_utils.auth.helper import ClarifaiAuthHelper
 from clarifai_utils.listing.lister import ClarifaiResourceLister
+from clarifai_utils.modules.pages import ClarifaiModulePageManager
+
+from utils.api_utils import get_auth
 
 ########################
 # Required in every Clarifai streamlit app
 ########################
-# Validate and parse the query params we need.
-try:
-  auth = ClarifaiAuthHelper.from_streamlit_query_params(st.experimental_get_query_params())
-except:
-  auth = ClarifaiAuthHelper.from_env()
 
 st.set_page_config(layout="wide")
+# Validate and parse the query params we need.
+auth = get_auth()
 ########################
 
-# Create the clarifai grpc client.
-channel = ClarifaiChannel.get_grpc_channel(base="api.clarifai.com")
-stub = service_pb2_grpc.V2Stub(channel)
+stub = auth.get_stub()
 metadata = auth.metadata
-print(metadata)
 userDataObject = auth.get_user_app_id_proto()
-print(userDataObject)
 
 page_size = 3
 
@@ -70,17 +61,10 @@ local_css("style.css")
 ####################################
 # Read the page param from the query bar.
 qp = st.experimental_get_query_params()
-# List all the available pages.
-page_files = sorted(glob.glob("pages/page*.py"))
-page_numbers = [f.replace('pages/page', '').replace('.py', '') for f in page_files]
-N = len(page_files)
-# Get the page or default to 1 from the url.
-page = qp.get('page', ['1'])[0]
-# Check that the page number coming in is within the range of pages in the folder.
-if page not in page_numbers:
-  raise Exception(
-      "Page %s is out of range, no page in pages/ folder found with this name. Valid page numbers are: %s"
-      % (page, str(page_numbers)))
+
+page_manager = ClarifaiModulePageManager()
+page = page_manager.get_page_from_query_params(qp)
+page_names = page_manager.get_page_names()
 
 
 ######
@@ -100,26 +84,14 @@ def callback():
 cols = st.columns(4)
 result = cols[0].selectbox(
     'Select the page to jump to',
-    page_numbers,
-    page_numbers.index(page),  # This is how we render the current page in the first place.
+    page_names,
+    page_names.index(page),  # This is how we render the current page in the first place.
     key='page_selector',
     help=
     "This is just an example page selector, but we don't need to use this as we will drive pages from the sidebar.",
     on_change=callback)
 ######
 
-# Since the page re-renders every time the selectbox changes, we'll always have the latest page out
-# of the query params.
-module_str = 'pages.page%s' % page
-print(module_str)
-
-# check if the page exists
-spec = importlib.util.find_spec(module_str)
-if page is None:
-  raise Exception("Page %s is was not found" % page)
-
 # Finally import that page's .py file and call it's display function in it.
-print("About to render: %s" % module_str)
-current_page = importlib.import_module(module_str)
-current_page.display()
+page_manager.render_page(page)
 ####################################

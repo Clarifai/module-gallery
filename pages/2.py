@@ -1,37 +1,23 @@
 import streamlit as st
-## Import in the Clarifai gRPC based objects needed
-from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
-from clarifai_grpc.grpc.api import service_pb2_grpc
-## Import in the Clarifai gRPC based objects needed
-from clarifai_utils.auth.helper import ClarifaiAuthHelper
 from clarifai_utils.listing.lister import ClarifaiResourceLister
 from stqdm import stqdm
 
+from utils.api_utils import get_auth
 from utils.mosaic import urls_to_mosaic
-
-########################
-# Required in every Clarifai streamlit app
-########################
-# Validate and parse the query params we need.
-try:
-  auth = ClarifaiAuthHelper.from_streamlit_query_params(st.experimental_get_query_params())
-except:
-  auth = ClarifaiAuthHelper.from_env()
-
-# Create the clarifai grpc client.
-channel = ClarifaiChannel.get_grpc_channel(base="api.clarifai.com")
-stub = service_pb2_grpc.V2Stub(channel)
-metadata = auth.metadata
-print(metadata)
-userDataObject = auth.get_user_app_id_proto()
-print(userDataObject)
-
-lister = ClarifaiResourceLister(stub, metadata, auth.user_id, auth.app_id, page_size=16)
 
 
 ##########################################################
 def display():
+  # This must be within the display() function.
+  auth = get_auth()
+  stub = auth.get_stub()
+  metadata = auth.metadata
+  userDataObject = auth.get_user_app_id_proto()
+  lister = ClarifaiResourceLister(stub, metadata, auth.user_id, auth.app_id, page_size=16)
+
+  st.title("Image Mosaic Builder")
   with st.form(key="mosiac-inputs"):
+
     mtotal = st.number_input(
         "Select number of images to add to mosaic:", min_value=1, max_value=100)
     submitted = st.form_submit_button('Submit')
