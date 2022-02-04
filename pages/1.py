@@ -2,29 +2,19 @@ import altair as alt
 import numpy as np
 import pandas as pd
 import streamlit as st
-## Import in the Clarifai gRPC based objects needed
-from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
-from clarifai_grpc.grpc.api import service_pb2_grpc
-from clarifai_utils.auth.helper import ClarifaiAuthHelper
 from vega_datasets import data
 
-try:
-  auth = ClarifaiAuthHelper.from_streamlit_query_params(st.experimental_get_query_params())
-except:
-  auth = ClarifaiAuthHelper.from_env()
-
-########################
-
-# Create the clarifai grpc client.
-channel = ClarifaiChannel.get_grpc_channel(base="api.clarifai.com")
-stub = service_pb2_grpc.V2Stub(channel)
-metadata = auth.metadata
-print(metadata)
-userDataObject = auth.get_user_app_id_proto()
-print(userDataObject)
+from utils.api_utils import get_auth
 
 
 def display():
+  # This must be within the display() function.
+  auth = get_auth()
+  stub = auth.get_stub()
+  metadata = auth.metadata
+  userDataObject = auth.get_user_app_id_proto()
+  st.title("Plotting Fun")
+
   # Generating Data
   source = pd.DataFrame({
       'Trial A': np.random.normal(0, 0.8, 1000),
