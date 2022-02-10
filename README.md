@@ -64,7 +64,19 @@ If `page=N` is not provided, the code defaults to `page=1`.
 
 ## Using Clarifai CSS Styles
 
-This repo includes a style.css file that renders many (not all) of the streamlit widgets using Clarifai's styles. The way it works is it should be loaded (see `local_css`) at the top of your streamlit `app.py` in order to inject the styles into the rendered html page. Eventually we plan to fully host this style file and load it remotely from that url so that it's always the most up to date style file.
+This is done via the .streamlit/config.toml file which sets the primaryColor to Clarifai blue "#356dff".
+
+For more advanced css you can add a style.css file to the top level of the repo and load it in streamlit with:
+```
+def local_css(file_name):
+  with open(file_name) as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+
+local_css("style.css")
+```
+
+The way it works is it should be loaded (see `local_css`) at the top of your streamlit `app.py` in order to inject the styles into the rendered html page. Eventually we plan to fully host this style file and load it remotely from that url so that it's always the most up to date style file.
 
 ### If you've already created an app
 
