@@ -44,18 +44,6 @@ if 'get_input_count_response' not in st.session_state:
   st.session_state['total'] = total
   st.session_state['get_input_count_response'] = get_input_count_response
 
-
-####################################
-# Style the page to match Clarifai styles.
-####################################
-def local_css(file_name):
-  with open(file_name) as f:
-    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-
-
-local_css("style.css")
-####################################
-
 ####################################
 # Get the current page to render
 ####################################
