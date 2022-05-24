@@ -1,4 +1,4 @@
-clarifai-utils==0.0.7
+clarifai-utils==0.0.9
 clarifai-grpc==7.12.0rc1
 altair==4.2.0rc1
 streamlit==1.5.0

@@ -2,16 +2,17 @@ import altair as alt
 import numpy as np
 import pandas as pd
 import streamlit as st
+from clarifai_utils.auth.helper import ClarifaiAuthHelper
 from google.protobuf import json_format
 from PIL import Image
 
-from utils.api_utils import get_auth, predict_from_image
+from utils.api_utils import predict_from_image
 
 
 ##########################################################
 def display():
   # This must be within the display() function.
-  auth = get_auth()
+  auth = ClarifaiAuthHelper.from_streamlit(st)
   stub = auth.get_stub()
   metadata = auth.metadata
   userDataObject = auth.get_user_app_id_proto()

@@ -1,15 +1,15 @@
 import streamlit as st
+from clarifai_utils.auth.helper import ClarifaiAuthHelper
 from clarifai_utils.listing.lister import ClarifaiResourceLister
 from stqdm import stqdm
 
-from utils.api_utils import get_auth
 from utils.mosaic import urls_to_mosaic
 
 
 ##########################################################
 def display():
   # This must be within the display() function.
-  auth = get_auth()
+  auth = ClarifaiAuthHelper.from_streamlit(st)
   stub = auth.get_stub()
   metadata = auth.metadata
   userDataObject = auth.get_user_app_id_proto()

@@ -2,10 +2,9 @@ import streamlit as st
 ## Import in the Clarifai gRPC based objects needed
 from clarifai_grpc.grpc.api import service_pb2
 from clarifai_grpc.grpc.api.status import status_code_pb2
+from clarifai_utils.auth.helper import ClarifaiAuthHelper
 from clarifai_utils.listing.lister import ClarifaiResourceLister
 from clarifai_utils.modules.pages import ClarifaiModulePageManager
-
-from utils.api_utils import get_auth
 
 ########################
 # Required in every Clarifai streamlit app
@@ -13,7 +12,7 @@ from utils.api_utils import get_auth
 
 st.set_page_config(layout="wide")
 # Validate and parse the query params we need.
-auth = get_auth()
+auth = ClarifaiAuthHelper.from_streamlit(st)
 ########################
 
 stub = auth.get_stub()

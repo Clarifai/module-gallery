@@ -1,16 +1,5 @@
-import streamlit as st
 from clarifai_grpc.grpc.api import resources_pb2, service_pb2
 from clarifai_grpc.grpc.api.status import status_code_pb2
-from clarifai_utils.auth.helper import ClarifaiAuthHelper
-
-
-def get_auth():
-  try:
-    auth = ClarifaiAuthHelper.from_streamlit_query_params(st.experimental_get_query_params())
-  except Exception as e:
-    raise (e)
-    auth = ClarifaiAuthHelper.from_env()
-  return auth
 
 
 def concept_key(concept):

@@ -46,11 +46,11 @@ For a single page app all you need to implement is the app.py file. You're of co
 ### Building Multi-Page Apps
 The example in this repo shows how you can build a multi-page application using the ClarifaiModulePageManger from [clarifai-utils](https://github.com/Clarifai/clarifai-python-utils). `app.py` essentially looks at the `page=N` query param (where N is a string filename expected to be in the pages folder) and uses that to import the `pages/{N}.py` as a module and then call that module's `display()` function. Therefore you can implement as many pages as you like with each pages/{N}.py looking something like:
 ```python
-from utils.api_utils import get_auth
+from clarifai_utils.auth.helper import ClarifaiAuthHelper
 
 def display():
   # Get the Clarifai auth from query params.
-  auth = get_auth()
+  auth = ClarifaiAuthHelper.from_streamlit(st)
   # Get the Clarifai API stub.
   stub = auth.get_stub()
 
