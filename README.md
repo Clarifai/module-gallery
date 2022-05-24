@@ -11,9 +11,7 @@ This is a test streamlit app with  the official Clarifai Python utilities. This 
 
 ## Installation
 
-First install the [clarifai-utils](https://github.com/Clarifai/clarifai-utils) package following these [instructions](https://github.com/Clarifai/clarifai-utils#installation).
-
-Then git clone and setup this repo:
+Simply git clone and setup this repo with the requirements.txt file:
 ```cmd
 git clone git@github.com:Clarifai/clarifai-module-gallery.git
 cd clarifai-module-gallery
