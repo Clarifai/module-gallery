@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 from clarifai_utils.auth.helper import ClarifaiAuthHelper
+from clarifai_utils.modules.css import ClarifaiStreamlitCSS
 from google.protobuf import json_format
 from PIL import Image
 
@@ -11,6 +12,8 @@ from utils.api_utils import predict_from_image
 
 ##########################################################
 def display():
+  ClarifaiStreamlitCSS.insert_default_css(st)
+
   # This must be within the display() function.
   auth = ClarifaiAuthHelper.from_streamlit(st)
   stub = auth.get_stub()
@@ -132,3 +135,7 @@ def display():
     c = alt.Chart(cmelted).mark_bar().encode(
         y='model', x='sum(confidence)', color='model', row='Concept Names')
     st.altair_chart(c)  #, use_container_width=True)
+
+
+if __name__ == '__main__':
+  display()

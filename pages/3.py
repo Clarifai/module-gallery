@@ -3,6 +3,7 @@ import pandas as pd
 import streamlit as st
 from clarifai_utils.auth.helper import ClarifaiAuthHelper
 from clarifai_utils.listing.lister import ClarifaiResourceLister
+from clarifai_utils.modules.css import ClarifaiStreamlitCSS
 from stqdm import stqdm
 
 from utils.api_utils import concept_key, get_annotations_for_input_batch
@@ -11,6 +12,8 @@ page_size = 16
 
 
 def display():
+  ClarifaiStreamlitCSS.insert_default_css(st)
+
   # This must be within the display() function.
   auth = ClarifaiAuthHelper.from_streamlit(st)
   stub = auth.get_stub()
@@ -156,3 +159,7 @@ def display():
     pie = base.mark_arc(outerRadius=120)
     text = base.mark_text(radius=160, size=20).encode(text="concept")
     st.altair_chart(pie + text, use_container_width=True)
+
+
+if __name__ == '__main__':
+  display()
