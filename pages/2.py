@@ -46,3 +46,7 @@ def display():
     mosaic = urls_to_mosaic(url_list)
 
     st.image(mosaic)
+
+
+if __name__ == '__main__':
+  display()

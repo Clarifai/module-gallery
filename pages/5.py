@@ -49,3 +49,7 @@ def display():
         st.columns(4))  # st.columns here since it is out of beta at the time I'm writing this
     for idx, filteredImage in enumerate(filteredImages):
       next(cols).image(np.array(filteredImage), use_column_width=True)
+
+
+if __name__ == '__main__':
+  display()

@@ -142,3 +142,7 @@ def display():
           tooltip=['state:N', 'count:Q']).properties(title='Number of airports in US')
 
   st.altair_chart(background + points)
+
+
+if __name__ == '__main__':
+  display()

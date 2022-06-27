@@ -11,6 +11,7 @@ from clarifai_utils.modules.pages import ClarifaiModulePageManager
 ########################
 
 st.set_page_config(layout="wide")
+
 # Validate and parse the query params we need.
 auth = ClarifaiAuthHelper.from_streamlit(st)
 ########################
@@ -22,6 +23,14 @@ userDataObject = auth.get_user_app_id_proto()
 page_size = 3
 
 lister = ClarifaiResourceLister(stub, metadata, auth.user_id, auth.app_id, page_size)
+
+
+def local_css(file_name):
+  with open(file_name) as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+
+local_css("style.css")
 
 ###################
 

@@ -132,3 +132,7 @@ def display():
     c = alt.Chart(cmelted).mark_bar().encode(
         y='model', x='sum(confidence)', color='model', row='Concept Names')
     st.altair_chart(c)  #, use_container_width=True)
+
+
+if __name__ == '__main__':
+  display()

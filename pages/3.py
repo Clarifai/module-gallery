@@ -156,3 +156,7 @@ def display():
     pie = base.mark_arc(outerRadius=120)
     text = base.mark_text(radius=160, size=20).encode(text="concept")
     st.altair_chart(pie + text, use_container_width=True)
+
+
+if __name__ == '__main__':
+  display()
