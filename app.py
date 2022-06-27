@@ -4,6 +4,7 @@ from clarifai_grpc.grpc.api import service_pb2
 from clarifai_grpc.grpc.api.status import status_code_pb2
 from clarifai_utils.auth.helper import ClarifaiAuthHelper
 from clarifai_utils.listing.lister import ClarifaiResourceLister
+from clarifai_utils.modules.css import ClarifaiStreamlitCSS
 from clarifai_utils.modules.pages import ClarifaiModulePageManager
 
 ########################
@@ -11,6 +12,8 @@ from clarifai_utils.modules.pages import ClarifaiModulePageManager
 ########################
 
 st.set_page_config(layout="wide")
+
+ClarifaiStreamlitCSS.insert_default_css(st)
 
 # Validate and parse the query params we need.
 auth = ClarifaiAuthHelper.from_streamlit(st)
@@ -23,14 +26,6 @@ userDataObject = auth.get_user_app_id_proto()
 page_size = 3
 
 lister = ClarifaiResourceLister(stub, metadata, auth.user_id, auth.app_id, page_size)
-
-
-def local_css(file_name):
-  with open(file_name) as f:
-    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-
-
-local_css("style.css")
 
 ###################
 

@@ -4,6 +4,7 @@ import numpy as np
 import streamlit as st
 from clarifai_utils.auth.helper import ClarifaiAuthHelper
 from clarifai_utils.listing.lister import ClarifaiResourceLister
+from clarifai_utils.modules.css import ClarifaiStreamlitCSS
 from stqdm import stqdm
 
 from utils.mosaic import download_urls
@@ -11,6 +12,8 @@ from utils.mosaic import download_urls
 
 ##########################################################
 def display():
+  ClarifaiStreamlitCSS.insert_default_css(st)
+
   # This must be within the display() function.
   auth = ClarifaiAuthHelper.from_streamlit(st)
   stub = auth.get_stub()

@@ -3,10 +3,13 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 from clarifai_utils.auth.helper import ClarifaiAuthHelper
+from clarifai_utils.modules.css import ClarifaiStreamlitCSS
 from vega_datasets import data
 
 
 def display():
+  ClarifaiStreamlitCSS.insert_default_css(st)
+
   # This must be within the display() function.
   auth = ClarifaiAuthHelper.from_streamlit(st)
   stub = auth.get_stub()
