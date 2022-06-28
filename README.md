@@ -42,23 +42,13 @@ http://localhost:8501?user_id={user_id}&app_id={app_id}&pat={pat}=base={base}
 For a single page app all you need to implement is the app.py file. You're of course free to import any other python modules you build but they will all be used to render that single page. A single page app will still let `page=N` come in as a query param but it will be ignored.
 
 ### Building Multi-Page Apps
-The example in this repo shows how you can build a multi-page application using the ClarifaiModulePageManger from [clarifai-utils](https://github.com/Clarifai/clarifai-python-utils). `app.py` essentially looks at the `page=N` query param (where N is a string filename expected to be in the pages folder) and uses that to import the `pages/{N}.py` as a module and then call that module's `display()` function. Therefore you can implement as many pages as you like with each pages/{N}.py looking something like:
-```python
-from clarifai_utils.auth.helper import ClarifaiAuthHelper
+This is now natively supported in streamlit since version 1.10.0. See https://docs.streamlit.io/library/get-started/multipage-apps for more details. 
 
-def display():
-  # Get the Clarifai auth from query params.
-  auth = ClarifaiAuthHelper.from_streamlit(st)
-  # Get the Clarifai API stub.
-  stub = auth.get_stub()
-
-  # streamlit stuff to be rendered on that page.
-  st.title("My New Page!")
+Note we add the following to `.streamlit/config.toml` so that the sidebar does not show by default:
 ```
-
-An example of jumping between pages using a dropdown is also provided in `app.py`. This is just an example that might make it easier when doing local development of multi-page apps (though you can always use the page=N query param). However, when your app is integrated into the sidebar of our UIs it will receive the `page=N` query param when someone clicks on the navbar link so there is no need for the page dropdown to remain in an app mode once it's ready for production.
-
-If `page=N` is not provided, the code defaults to `page=1`.
+[ui]
+hideSidebarNav=true
+``` 
 
 ## Using Clarifai CSS Styles
 
