@@ -1,6 +1,6 @@
 ![Clarifai logo](https://www.clarifai.com/hs-fs/hubfs/logo/Clarifai/clarifai-740x150.png?width=240)
 
-# Clarifai App Mode Gallery
+# Clarifai App Model Gallery
 
 
 This is a test streamlit app with  the official Clarifai Python utilities. This repo includes higher level convencience classes, functions, and scripts to make using our [API](https://docs.clarifai.com) easier. This is built on top of the [Clarifai Python gRPC Client](https://github.com/Clarifai/clarifai-python-grpc).
@@ -13,8 +13,8 @@ This is a test streamlit app with  the official Clarifai Python utilities. This 
 
 Simply git clone and setup this repo with the requirements.txt file:
 ```cmd
-git clone git@github.com:Clarifai/clarifai-module-gallery.git
-cd clarifai-module-gallery
+git clone git@github.com:Clarifai/module-gallery.git
+cd module-gallery
 pip install -r requirements.txt
 ```
 
