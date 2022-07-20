@@ -10,139 +10,147 @@ from utils.api_utils import init_session_state
 
 ClarifaiStreamlitCSS.insert_default_css(st)
 
-# This must be within the display() function.
-auth = ClarifaiAuthHelper.from_streamlit(st)
-stub = auth.get_stub()
-metadata = auth.metadata
-userDataObject = auth.get_user_app_id_proto()
-st.title("Plotting Fun")
 
-init_session_state(st, auth)
+def display():
 
-# Generating Data
-source = pd.DataFrame({
-    'Trial A': np.random.normal(0, 0.8, 1000),
-    'Trial B': np.random.normal(-2, 1, 1000),
-    'Trial C': np.random.normal(3, 2, 1000)
-})
+  # This must be within the display() function.
+  auth = ClarifaiAuthHelper.from_streamlit(st)
+  stub = auth.get_stub()
+  metadata = auth.metadata
+  userDataObject = auth.get_user_app_id_proto()
+  st.title("Plotting Fun")
 
-c = alt.Chart(source).transform_fold(
-    ['Trial A', 'Trial B', 'Trial C'], as_=['Experiment', 'Measurement']).mark_bar(
-        opacity=0.3, binSpacing=0).encode(
-            alt.X('Measurement:Q', bin=alt.Bin(maxbins=100)),
-            alt.Y('count()', stack=None), alt.Color('Experiment:N'))
-print(source)
-st.altair_chart(c)
+  init_session_state(st, auth)
 
-source = data.movies.url
+  # Generating Data
+  source = pd.DataFrame({
+      'Trial A': np.random.normal(0, 0.8, 1000),
+      'Trial B': np.random.normal(-2, 1, 1000),
+      'Trial C': np.random.normal(3, 2, 1000)
+  })
 
-pts = alt.selection(type="single", encodings=['x'])
+  c = alt.Chart(source).transform_fold(
+      ['Trial A', 'Trial B', 'Trial C'], as_=['Experiment', 'Measurement']).mark_bar(
+          opacity=0.3, binSpacing=0).encode(
+              alt.X('Measurement:Q', bin=alt.Bin(maxbins=100)),
+              alt.Y('count()', stack=None), alt.Color('Experiment:N'))
+  print(source)
+  st.altair_chart(c)
 
-rect = alt.Chart(data.movies.url).mark_rect().encode(
-    alt.X('IMDB_Rating:Q', bin=True),
-    alt.Y('Rotten_Tomatoes_Rating:Q', bin=True),
-    alt.Color(
-        'count()', scale=alt.Scale(scheme='greenblue'), legend=alt.Legend(title='Total Records')))
+  source = data.movies.url
 
-circ = rect.mark_point().encode(
-    alt.ColorValue('grey'),
-    alt.Size('count()', legend=alt.Legend(title='Records in Selection'))).transform_filter(pts)
+  pts = alt.selection(type="single", encodings=['x'])
 
-bar = alt.Chart(source).mark_bar().encode(
-    x='Major_Genre:N',
-    y='count()',
-    color=alt.condition(pts, alt.ColorValue("steelblue"), alt.ColorValue("grey"))).properties(
-        width=550, height=200).add_selection(pts)
+  rect = alt.Chart(data.movies.url).mark_rect().encode(
+      alt.X('IMDB_Rating:Q', bin=True),
+      alt.Y('Rotten_Tomatoes_Rating:Q', bin=True),
+      alt.Color(
+          'count()', scale=alt.Scale(scheme='greenblue'),
+          legend=alt.Legend(title='Total Records')))
 
-st.altair_chart(
-    alt.vconcat(rect + circ, bar).resolve_legend(color="independent", size="independent"))
+  circ = rect.mark_point().encode(
+      alt.ColorValue('grey'),
+      alt.Size('count()', legend=alt.Legend(title='Records in Selection'))).transform_filter(pts)
 
-source = data.cars()
+  bar = alt.Chart(source).mark_bar().encode(
+      x='Major_Genre:N',
+      y='count()',
+      color=alt.condition(pts, alt.ColorValue("steelblue"), alt.ColorValue("grey"))).properties(
+          width=550, height=200).add_selection(pts)
 
-st.altair_chart(
-    alt.Chart(source).mark_circle().encode(
-        alt.X(alt.repeat("column"), type='quantitative'),
-        alt.Y(alt.repeat("row"), type='quantitative'),
-        color='Origin:N').properties(width=150, height=150).repeat(
-            row=['Horsepower', 'Acceleration', 'Miles_per_Gallon'],
-            column=['Miles_per_Gallon', 'Acceleration', 'Horsepower']).interactive())
+  st.altair_chart(
+      alt.vconcat(rect + circ, bar).resolve_legend(color="independent", size="independent"))
 
-source = data.cars()
+  source = data.cars()
 
-# Configure the options common to all layers
-brush = alt.selection(type='interval')
-base = alt.Chart(source).add_selection(brush)
+  st.altair_chart(
+      alt.Chart(source).mark_circle().encode(
+          alt.X(alt.repeat("column"), type='quantitative'),
+          alt.Y(alt.repeat("row"), type='quantitative'),
+          color='Origin:N').properties(width=150, height=150).repeat(
+              row=['Horsepower', 'Acceleration', 'Miles_per_Gallon'],
+              column=['Miles_per_Gallon', 'Acceleration', 'Horsepower']).interactive())
 
-# Configure the points
-points = base.mark_point().encode(
-    x=alt.X('Miles_per_Gallon', title=''),
-    y=alt.Y('Horsepower', title=''),
-    color=alt.condition(brush, 'Origin', alt.value('grey')))
+  source = data.cars()
 
-# Configure the ticks
-tick_axis = alt.Axis(labels=False, domain=False, ticks=False)
+  # Configure the options common to all layers
+  brush = alt.selection(type='interval')
+  base = alt.Chart(source).add_selection(brush)
 
-x_ticks = base.mark_tick().encode(
-    alt.X('Miles_per_Gallon', axis=tick_axis),
-    alt.Y('Origin', title='', axis=tick_axis),
-    color=alt.condition(brush, 'Origin', alt.value('lightgrey')))
+  # Configure the points
+  points = base.mark_point().encode(
+      x=alt.X('Miles_per_Gallon', title=''),
+      y=alt.Y('Horsepower', title=''),
+      color=alt.condition(brush, 'Origin', alt.value('grey')))
 
-y_ticks = base.mark_tick().encode(
-    alt.X('Origin', title='', axis=tick_axis),
-    alt.Y('Horsepower', axis=tick_axis),
-    color=alt.condition(brush, 'Origin', alt.value('lightgrey')))
+  # Configure the ticks
+  tick_axis = alt.Axis(labels=False, domain=False, ticks=False)
 
-# Build the chart
-st.altair_chart(y_ticks | (points & x_ticks))
+  x_ticks = base.mark_tick().encode(
+      alt.X('Miles_per_Gallon', axis=tick_axis),
+      alt.Y('Origin', title='', axis=tick_axis),
+      color=alt.condition(brush, 'Origin', alt.value('lightgrey')))
 
-source = data.stocks()
+  y_ticks = base.mark_tick().encode(
+      alt.X('Origin', title='', axis=tick_axis),
+      alt.Y('Horsepower', axis=tick_axis),
+      color=alt.condition(brush, 'Origin', alt.value('lightgrey')))
 
-st.altair_chart(
-    alt.Chart(source).transform_filter('datum.symbol==="GOOG"').mark_area(
-        line={
-            'color': 'darkgreen'
-        },
-        color=alt.Gradient(
-            gradient='linear',
-            stops=[
-                alt.GradientStop(color='white', offset=0),
-                alt.GradientStop(color='darkgreen', offset=1)
-            ],
-            x1=1,
-            x2=1,
-            y1=1,
-            y2=0)).encode(alt.X('date:T'), alt.Y('price:Q')))
+  # Build the chart
+  st.altair_chart(y_ticks | (points & x_ticks))
 
-source = data.unemployment_across_industries.url
+  source = data.stocks()
 
-base = alt.Chart(source).mark_area(
-    color='goldenrod', opacity=0.3).encode(
-        x='yearmonth(date):T',
-        y='sum(count):Q',
-    )
+  st.altair_chart(
+      alt.Chart(source).transform_filter('datum.symbol==="GOOG"').mark_area(
+          line={
+              'color': 'darkgreen'
+          },
+          color=alt.Gradient(
+              gradient='linear',
+              stops=[
+                  alt.GradientStop(color='white', offset=0),
+                  alt.GradientStop(color='darkgreen', offset=1)
+              ],
+              x1=1,
+              x2=1,
+              y1=1,
+              y2=0)).encode(alt.X('date:T'), alt.Y('price:Q')))
 
-brush = alt.selection_interval(encodings=['x'], empty='all')
-background = base.add_selection(brush)
-selected = base.transform_filter(brush).mark_area(color='goldenrod')
+  source = data.unemployment_across_industries.url
 
-st.altair_chart(background + selected)
+  base = alt.Chart(source).mark_area(
+      color='goldenrod', opacity=0.3).encode(
+          x='yearmonth(date):T',
+          y='sum(count):Q',
+      )
 
-airports = data.airports.url
-states = alt.topo_feature(data.us_10m.url, feature='states')
+  brush = alt.selection_interval(encodings=['x'], empty='all')
+  background = base.add_selection(brush)
+  selected = base.transform_filter(brush).mark_area(color='goldenrod')
 
-# US states background
-background = alt.Chart(states).mark_geoshape(
-    fill='lightgray', stroke='white').properties(
-        width=500, height=300).project('albersUsa')
+  st.altair_chart(background + selected)
 
-# airport positions on background
-points = alt.Chart(airports).transform_aggregate(
-    latitude='mean(latitude)', longitude='mean(longitude)', count='count()',
-    groupby=['state']).mark_circle().encode(
-        longitude='longitude:Q',
-        latitude='latitude:Q',
-        size=alt.Size('count:Q', title='Number of Airports'),
-        color=alt.value('steelblue'),
-        tooltip=['state:N', 'count:Q']).properties(title='Number of airports in US')
+  airports = data.airports.url
+  states = alt.topo_feature(data.us_10m.url, feature='states')
 
-st.altair_chart(background + points)
+  # US states background
+  background = alt.Chart(states).mark_geoshape(
+      fill='lightgray', stroke='white').properties(
+          width=500, height=300).project('albersUsa')
+
+  # airport positions on background
+  points = alt.Chart(airports).transform_aggregate(
+      latitude='mean(latitude)', longitude='mean(longitude)', count='count()',
+      groupby=['state']).mark_circle().encode(
+          longitude='longitude:Q',
+          latitude='latitude:Q',
+          size=alt.Size('count:Q', title='Number of Airports'),
+          color=alt.value('steelblue'),
+          tooltip=['state:N', 'count:Q']).properties(title='Number of airports in US')
+
+  st.altair_chart(background + points)
+
+
+if __name__ == '__main__':
+  display()
