@@ -4,52 +4,47 @@ from clarifai_utils.listing.lister import ClarifaiResourceLister
 from clarifai_utils.modules.css import ClarifaiStreamlitCSS
 from stqdm import stqdm
 
+from utils.api_utils import init_session_state
 from utils.mosaic import urls_to_mosaic
 
-
 ##########################################################
-def display():
-  ClarifaiStreamlitCSS.insert_default_css(st)
 
-  # This must be within the display() function.
-  auth = ClarifaiAuthHelper.from_streamlit(st)
-  stub = auth.get_stub()
-  metadata = auth.metadata
-  userDataObject = auth.get_user_app_id_proto()
-  lister = ClarifaiResourceLister(stub, metadata, auth.user_id, auth.app_id, page_size=16)
+ClarifaiStreamlitCSS.insert_default_css(st)
 
-  st.title("Image Mosaic Builder")
-  with st.form(key="mosiac-inputs"):
+# This must be within the display() function.
+auth = ClarifaiAuthHelper.from_streamlit(st)
+init_session_state(st, auth)
+stub = auth.get_stub()
+metadata = auth.metadata
+userDataObject = auth.get_user_app_id_proto()
+lister = ClarifaiResourceLister(stub, metadata, auth.user_id, auth.app_id, page_size=16)
 
-    mtotal = st.number_input(
-        "Select number of images to add to mosaic:", min_value=1, max_value=100)
-    submitted = st.form_submit_button('Submit')
+st.title("Image Mosaic Builder")
+with st.form(key="mosiac-inputs"):
 
-  if submitted:
-    if mtotal is None or mtotal == 0:
-      st.warning("Number of images must be provided.")
-      st.stop()
-    else:
-      st.write("Mosaic number of images will be: {}".format(mtotal))
+  mtotal = st.number_input("Select number of images to add to mosaic:", min_value=1, max_value=100)
+  submitted = st.form_submit_button('Submit')
 
-    total = st.session_state['total']
+if submitted:
+  if mtotal is None or mtotal == 0:
+    st.warning("Number of images must be provided.")
+    st.stop()
+  else:
+    st.write("Mosaic number of images will be: {}".format(mtotal))
 
-    # Stream inputs from the app
-    all_images = []
-    for inp in stqdm(
-        lister.inputs_generator(), desc="Listing all the inputs in the app", total=total):
-      if inp.data.image is not None:
-        all_images.append(inp.data.image)
-      if len(all_images) >= mtotal:
-        break
+  total = st.session_state['total']
 
-    print(all_images)
-    url_list = [im.url for im in all_images if im.url != ""]
+  # Stream inputs from the app
+  all_images = []
+  for inp in stqdm(
+      lister.inputs_generator(), desc="Listing all the inputs in the app", total=total):
+    if inp.data.image is not None:
+      all_images.append(inp.data.image)
+    if len(all_images) >= mtotal:
+      break
 
-    mosaic = urls_to_mosaic(url_list)
+  url_list = [im.url for im in all_images if im.url != ""]
 
-    st.image(mosaic)
+  mosaic = urls_to_mosaic(url_list)
 
-
-if __name__ == '__main__':
-  display()
+  st.image(mosaic)
