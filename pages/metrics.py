@@ -6,12 +6,13 @@ from clarifai_utils.listing.lister import ClarifaiResourceLister
 from clarifai_utils.modules.css import ClarifaiStreamlitCSS
 from stqdm import stqdm
 
-from utils.api_utils import concept_key, get_annotations_for_input_batch
+from utils.api_utils import concept_key, get_annotations_for_input_batch, init_session_state
 
 page_size = 16
 
 
 def display():
+
   ClarifaiStreamlitCSS.insert_default_css(st)
 
   # This must be within the display() function.
@@ -20,6 +21,8 @@ def display():
   metadata = auth.metadata
   userDataObject = auth.get_user_app_id_proto()
   lister = ClarifaiResourceLister(stub, metadata, auth.user_id, auth.app_id, page_size=page_size)
+
+  init_session_state(st, auth)
 
   st.title("App Data Metrics")
   with st.form(key="metrics-inputs"):

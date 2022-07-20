@@ -6,6 +6,8 @@ from clarifai_utils.auth.helper import ClarifaiAuthHelper
 from clarifai_utils.modules.css import ClarifaiStreamlitCSS
 from vega_datasets import data
 
+from utils.api_utils import init_session_state
+
 
 def display():
   ClarifaiStreamlitCSS.insert_default_css(st)
@@ -16,6 +18,8 @@ def display():
   metadata = auth.metadata
   userDataObject = auth.get_user_app_id_proto()
   st.title("Plotting Fun")
+
+  init_session_state(st, auth)
 
   # Generating Data
   source = pd.DataFrame({

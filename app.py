@@ -17,9 +17,8 @@ ClarifaiStreamlitCSS.insert_default_css(st)
 
 # Validate and parse the query params we need.
 auth = ClarifaiAuthHelper.from_streamlit(st)
-########################
-
 stub = auth.get_stub()
+########################
 metadata = auth.metadata
 userDataObject = auth.get_user_app_id_proto()
 
