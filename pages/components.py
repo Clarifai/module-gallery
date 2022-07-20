@@ -1,19 +1,10 @@
-from itertools import cycle
-
-import pandas as pd
-import numpy as np
 import streamlit as st
-from clarifai_utils.auth.helper import ClarifaiAuthHelper
-from clarifai_utils.listing.lister import ClarifaiResourceLister
 from clarifai_utils.modules.css import ClarifaiStreamlitCSS
-from stqdm import stqdm
-
-from utils.mosaic import download_urls
 
 
 ##########################################################
 def display():
-  ClarifaiStreamlitCSS.insert_css_file("style.css", st)
+  ClarifaiStreamlitCSS.insert_default_css(st)
 
   st.header("Widgets")
 
