@@ -8,10 +8,9 @@ from vega_datasets import data
 
 from utils.api_utils import init_session_state
 
-ClarifaiStreamlitCSS.insert_default_css(st)
-
 
 def display():
+  ClarifaiStreamlitCSS.insert_default_css(st)
 
   # This must be within the display() function.
   auth = ClarifaiAuthHelper.from_streamlit(st)

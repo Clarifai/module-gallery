@@ -9,10 +9,9 @@ from utils.mosaic import urls_to_mosaic
 
 ##########################################################
 
-ClarifaiStreamlitCSS.insert_default_css(st)
-
 
 def display():
+  ClarifaiStreamlitCSS.insert_default_css(st)
   # This must be within the display() function.
   auth = ClarifaiAuthHelper.from_streamlit(st)
   init_session_state(st, auth)
