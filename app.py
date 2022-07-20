@@ -17,7 +17,7 @@ auth = ClarifaiAuthHelper.from_streamlit(st)
 
 st.title("Welcome to the Clarifai Module Gallery")
 st.write(
-    "This landing page have any significant functioality as we encourage you to implement your applications as multi-page apps."
+    "This landing page have any significant functionality as we encourage you to implement your applications as multi-page apps."
 )
 st.write("Take a look at the pages/*.py files.")
 ###################

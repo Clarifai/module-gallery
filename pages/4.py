@@ -4,6 +4,7 @@ import pandas as pd
 import streamlit as st
 from clarifai_utils.auth.helper import ClarifaiAuthHelper
 from clarifai_utils.modules.css import ClarifaiStreamlitCSS
+from clarifai_utils.urls.helper import ClarifaiUrlHelper
 from google.protobuf import json_format
 from PIL import Image
 
@@ -42,19 +43,30 @@ with st.form(key="model-compare"):
   st.header("Step 3: Upload Model ID and Version ID")
   cols = st.columns(2)
   cols[0].text("Model 1")
-  USER_ID1 = cols[0].text_input(" Paste user_id, then press enter:", key=1)
-  APP_ID1 = cols[0].text_input(" Paste app_id, then press enter:", key=2)
-  MODEL_ID1 = cols[0].text_input(" Paste Model ID, then press enter:", key=3)
-  VERSION_ID1 = cols[0].text_input(" Paste VERSION_ID, then press enter:", key=4)
+  url1 = cols[0].text_input(" Paste url to model 1, then press enter:", key=1)
   cols[1].text("Model 2")
-  USER_ID2 = cols[1].text_input(" Paste user_id, then press enter:", key=5)
-  APP_ID2 = cols[1].text_input(" Paste app_id, then press enter:", key=6)
-  MODEL_ID2 = cols[1].text_input(" Paste Model ID, then press enter:", key=7)
-  VERSION_ID2 = cols[1].text_input(" Paste VERSION_ID, then press enter:", key=8)
+  url2 = cols[1].text_input(" Paste url to model 2, then press enter:", key=1)
 
   submitted = st.form_submit_button('Compare Predicts')
 
 if submitted:  # this blocks here until the person hits the submit button.
+
+  USER_ID1, APP_ID1, resource_type, MODEL_ID1, VERSION_ID1 = ClarifaiUrlHelper.split_clarifai_url(
+      url1)
+  if resource_type != "models":
+    st.error(
+        "Provided url must point to a 'models' resource like https://clarifai.com/{user_id}/{app_id}/models/{resource_id}/model_versions/{resource_version_id}"
+    )
+    st.stop()
+
+  USER_ID2, APP_ID2, resource_type, MODEL_ID2, VERSION_ID2 = ClarifaiUrlHelper.split_clarifai_url(
+      url2)
+  if resource_type != "models":
+    st.error(
+        "Provided url must point to a 'models' resource like https://clarifai.com/{user_id}/{app_id}/models/{resource_id}/model_versions/{resource_version_id}"
+    )
+    st.stop()
+
   # NOTE(zeiler): not sure if this is the best way to validate a form.
   for var in [
       USER_ID1, USER_ID2, APP_ID1, APP_ID2, MODEL_ID1, MODEL_ID2, VERSION_ID1, VERSION_ID2
@@ -77,6 +89,8 @@ if submitted:  # this blocks here until the person hits the submit button.
 
   st.header("Predicted Concepts")
   cols = st.columns(2)
+  cols[0].write(f"{USER_ID1} / {APP_ID1} / models / {MODEL_ID1} / versions / {VERSION_ID1}")
+  cols[1].write(f"{USER_ID2} / {APP_ID2} / models / {MODEL_ID2} / versions / {VERSION_ID2}")
   concept_names = []
   concept_confidences = []
   for concept in response1.outputs[0].data.concepts:
