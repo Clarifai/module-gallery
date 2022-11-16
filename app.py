@@ -79,7 +79,7 @@ result = cols[0].selectbox(
     key='page_selector',
     help=
     "This is just an example page selector, but we don't need to use this as we will drive pages from the sidebar.",
-    on_change=callback)
+    on_change=callback) 
 ######
 
 # Finally import that page's .py file and call it's display function in it.
