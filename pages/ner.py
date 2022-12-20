@@ -35,6 +35,7 @@ def display():
     submitted = st.form_submit_button('Generate')
 
   if submitted:
+    print("Submitted!")
     # TODO: Make request with API
     #  model to call is in the variable model
     #  text to call with is in the variable annot_text
