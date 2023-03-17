@@ -58,3 +58,23 @@ def predict_from_image(stub, metadata, img_bytes, user_id, app_id, model_id, ver
     raise Exception("PostModelOutputs request failed: %r" % response)
 
   return response
+
+def predict_from_text(stub, metadata, text, user_id, app_id, model_id, version_id):
+  '''
+      '''
+  request = service_pb2.PostModelOutputsRequest(
+      user_app_id=resources_pb2.UserAppIDSet(user_id=user_id, app_id=app_id),
+      # This is the model ID of a publicly available General model. You may use any other public or custom model ID.
+      model_id=model_id,
+      inputs=[
+          resources_pb2.Input(data=resources_pb2.Data(text=resources_pb2.Text(raw=text)))
+      ])
+  if version_id is not None:
+    request.version_id = version_id
+
+  response = stub.PostModelOutputs(request, metadata=metadata)
+  # print(response)
+  if response.status.code != status_code_pb2.SUCCESS:
+    raise Exception("PostModelOutputs request failed: %r" % response)
+
+  return response
