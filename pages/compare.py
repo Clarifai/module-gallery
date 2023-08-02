@@ -44,7 +44,7 @@ with st.form(key="model-compare"):
   cols[0].text("Model 1")
   url1 = cols[0].text_input(" Paste url to model 1, then press enter:", key=1)
   cols[1].text("Model 2")
-  url2 = cols[1].text_input(" Paste url to model 2, then press enter:", key=1)
+  url2 = cols[1].text_input(" Paste url to model 2, then press enter:", key=2)
 
   submitted = st.form_submit_button('Compare Predicts')
 
