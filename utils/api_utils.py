@@ -8,9 +8,9 @@ def concept_key(concept):
   return "%s (%s)" % (concept.id, concept.name)
 
 def show_error(response, request_name):
-  st.error("There was an error with your request to "+request_name)
+  st.error(f"There was an error with your request to {request_name}")
   st.json(json_format.MessageToJson(response, preserving_proto_field_name=True))
-  raise Exception("There was an error with your request to "+request_name+" "+response)
+  raise Exception(f"There was an error with your request to {request_name} {response.status.description}")
   st.stop()
 
 
