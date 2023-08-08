@@ -19,6 +19,9 @@ stub = create_stub(auth)
 userDataObject = auth.get_user_app_id_proto()
 lister = ClarifaiResourceLister(stub, auth.user_id, auth.app_id, page_size=page_size)
 
+st.session_state['total'] = 0
+st.session_state.get_input_count_response = {}
+
 st.title("App Data Metrics")
 with st.form(key="metrics-inputs"):
   st.text("This will compute a bunch of stats about your app. You ready?")

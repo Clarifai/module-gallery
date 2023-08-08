@@ -17,6 +17,8 @@ metadata = auth.metadata
 userDataObject = auth.get_user_app_id_proto()
 lister = ClarifaiResourceLister(stub, auth.user_id, auth.app_id, page_size=16)
 
+st.session_state.total = 0
+
 st.title("Image Mosaic Builder")
 with st.form(key="mosiac-inputs"):
 
