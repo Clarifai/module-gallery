@@ -19,8 +19,8 @@ stub = create_stub(auth)
 userDataObject = auth.get_user_app_id_proto()
 lister = ClarifaiResourceLister(stub, auth.user_id, auth.app_id, page_size=page_size)
 
-st.session_state['total'] = 0
-st.session_state.get_input_count_response = {}
+# st.session_state['total'] = 0
+# st.session_state.get_input_count_response = {}
 
 st.title("App Data Metrics")
 with st.form(key="metrics-inputs"):
@@ -29,11 +29,11 @@ with st.form(key="metrics-inputs"):
 
 if submitted:
   # Set in the app.py file.
-  total = st.session_state['total']
+  # total = st.session_state['total']
 
   concepts = []
   for inp in stqdm(
-      lister.concepts_generator(), desc="Listing all the concepts in the app", total=total):
+      lister.concepts_generator(), desc="Listing all the concepts in the app"):
     concepts.append(inp)
   concept_ids = [concept_key(c) for c in concepts]
   print(concept_ids)
@@ -41,7 +41,7 @@ if submitted:
   # List all the inputs with a nice tqdm progress bar in the UI.
   all_inputs = []
   for inp in stqdm(
-      lister.inputs_generator(), desc="Listing all the inputs in the app", total=total):
+      lister.inputs_generator(), desc="Listing all the inputs in the app"):
     all_inputs.append(inp)
 
   # Stream inputs from the app
@@ -117,23 +117,24 @@ if submitted:
       'concept', var_name='posneg', value_name='count')
   print(unique_counts_melted)
 
-  get_input_count_response = st.session_state['get_input_count_response']
+  # get_input_count_response = st.session_state['get_input_count_response']
   st.header("Input status", anchor="input-status")
   st.markdown("Accumulated input counts broken down by status.")
-  status = pd.DataFrame({
-      "cat": ["processed", "processing", "to process", "error processing"],
-      "value": [
-          get_input_count_response.counts.processed, get_input_count_response.counts.processing,
-          get_input_count_response.counts.to_process, get_input_count_response.counts.errors
-      ]
-  })
-  c = alt.Chart(status).mark_bar().encode(x='cat', y='value')
-  text = c.mark_text(dy=-5).encode(text='value')
+  # status = pd.DataFrame({
+  #     "cat": ["processed", "processing", "to process", "error processing"],
+  #     "value": [
+  #         get_input_count_response.counts.processed, get_input_count_response.counts.processing,
+  #         get_input_count_response.counts.to_process, get_input_count_response.counts.errors
+  #     ]
+  # })
+
+  c = alt.Chart(counts_melted).mark_bar().encode(x='concept', y='sum(count)')
+  text = c.mark_text(dy=-5).encode(text='sum(count)')
   st.altair_chart(c + text, use_container_width=True)
 
-  base = alt.Chart(status).mark_arc().encode(theta=alt.Theta('value', stack=True), color='cat')
+  base = alt.Chart(counts_melted).mark_arc().encode(theta=alt.Theta('concept', stack=True), color='concept')
   pie = base.mark_arc(outerRadius=120)
-  text = base.mark_text(radius=140, size=20).encode(text="value:N")
+  text = base.mark_text(radius=140, size=20).encode(text="sum(count)")
   st.altair_chart(pie + text, use_container_width=True)
 
   # Finally plot the results to the UI.

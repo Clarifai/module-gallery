@@ -17,7 +17,7 @@ metadata = auth.metadata
 userDataObject = auth.get_user_app_id_proto()
 lister = ClarifaiResourceLister(stub, auth.user_id, auth.app_id, page_size=16)
 
-st.session_state.total = 0
+# st.session_state.total = 0
 
 st.title("Image Mosaic Builder")
 with st.form(key="mosiac-inputs"):
@@ -32,12 +32,12 @@ if submitted:
   else:
     st.write("Mosaic number of images will be: {}".format(mtotal))
 
-  total = st.session_state['total']
+  # total = st.session_state['total']
 
   # Stream inputs from the app
   all_images = []
   for inp in stqdm(
-      lister.inputs_generator(), desc="Listing all the inputs in the app", total=total):
+      lister.inputs_generator(), desc="Listing all the inputs in the app"):
     if inp.data.image is not None:
       all_images.append(inp.data.image)
     if len(all_images) >= mtotal:
