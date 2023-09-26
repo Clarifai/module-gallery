@@ -1,11 +1,11 @@
 import streamlit as st
-from clarifai.auth.helper import ClarifaiAuthHelper
-from clarifai.client import create_stub
-from clarifai.listing.lister import ClarifaiResourceLister
 from clarifai.modules.css import ClarifaiStreamlitCSS
-from stqdm import stqdm
+from clarifai_grpc.grpc.api import service_pb2
+from clarifai.client.auth import create_stub
+from clarifai.client.auth.helper import ClarifaiAuthHelper
 
 from utils.mosaic import urls_to_mosaic
+from utils.api_utils import list_all_inputs
 
 ##########################################################
 
@@ -15,7 +15,6 @@ auth = ClarifaiAuthHelper.from_streamlit(st)
 stub = create_stub(auth)
 metadata = auth.metadata
 userDataObject = auth.get_user_app_id_proto()
-lister = ClarifaiResourceLister(stub, auth.user_id, auth.app_id, page_size=16)
 
 # st.session_state.total = 0
 
@@ -36,15 +35,21 @@ if submitted:
 
   # Stream inputs from the app
   all_images = []
-  for inp in stqdm(
-      lister.inputs_generator(), desc="Listing all the inputs in the app"):
+  #Change this function with list_inputs once per_page filter arguement added with new SDK.
+  resp = list_all_inputs(userDataObject)
+  for inp in resp.inputs:
     if inp.data.image is not None:
       all_images.append(inp.data.image)
     if len(all_images) >= mtotal:
       break
-
+  
   url_list = [im.url for im in all_images if im.url != ""]
+  
+  if len(url_list) ==0:
+    st.write("Please add image inputs into your app !")
+    
+  else:
+    mosaic = urls_to_mosaic(url_list)
+    st.image(mosaic)
 
-  mosaic = urls_to_mosaic(url_list)
-
-  st.image(mosaic)
+  

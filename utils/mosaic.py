@@ -64,7 +64,7 @@ def urls_to_mosaic(url_list):
   random.seed(12345)
   random.shuffle(urls_shuf)
 
-  print(url_list)
+  #print(f"this is the url_list{url_list}")
 
   PIL_cropped = download_urls(urls_shuf)
 

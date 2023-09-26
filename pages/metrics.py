@@ -1,13 +1,12 @@
 import altair as alt
 import pandas as pd
 import streamlit as st
-from clarifai.auth.helper import ClarifaiAuthHelper
-from clarifai.client import create_stub
-from clarifai.listing.lister import ClarifaiResourceLister
+from clarifai.client.auth.helper import ClarifaiAuthHelper
+from clarifai.client.auth import create_stub
 from clarifai.modules.css import ClarifaiStreamlitCSS
 from stqdm import stqdm
 
-from utils.api_utils import concept_key, get_annotations_for_input_batch
+from utils.api_utils import concept_key, get_annotations_for_input_batch, concept_list, list_all_inputs
 
 page_size = 16
 
@@ -17,10 +16,10 @@ ClarifaiStreamlitCSS.insert_default_css(st)
 auth = ClarifaiAuthHelper.from_streamlit(st)
 stub = create_stub(auth)
 userDataObject = auth.get_user_app_id_proto()
-lister = ClarifaiResourceLister(stub, auth.user_id, auth.app_id, page_size=page_size)
 
 # st.session_state['total'] = 0
 # st.session_state.get_input_count_response = {}
+
 
 st.title("App Data Metrics")
 with st.form(key="metrics-inputs"):
@@ -32,17 +31,20 @@ if submitted:
   # total = st.session_state['total']
 
   concepts = []
-  for inp in stqdm(
-      lister.concepts_generator(), desc="Listing all the concepts in the app"):
-    concepts.append(inp)
+  concept_response= concept_list(userDataObject)
+  #st.write(f"concept status:{getattr(concept_response,'concepts')}")
+  if hasattr(concept_response, "concepts"):
+    for inp in getattr(concept_response,'concepts'):
+      concepts.append(inp)
+    
   concept_ids = [concept_key(c) for c in concepts]
-  print(concept_ids)
 
-  # List all the inputs with a nice tqdm progress bar in the UI.
+  # List all the inputs
   all_inputs = []
-  for inp in stqdm(
-      lister.inputs_generator(), desc="Listing all the inputs in the app"):
-    all_inputs.append(inp)
+  input_response= list_all_inputs(userDataObject)
+  for inp in input_response.inputs:
+    if inp is not None:
+      all_inputs.append(inp)
 
   # Stream inputs from the app
   all_annotations = []

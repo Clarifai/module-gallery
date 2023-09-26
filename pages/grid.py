@@ -2,13 +2,12 @@ from itertools import cycle
 
 import numpy as np
 import streamlit as st
-from clarifai.auth.helper import ClarifaiAuthHelper
-from clarifai.client import create_stub
-from clarifai.listing.lister import ClarifaiResourceLister
+from clarifai.client.auth import create_stub
+from clarifai.client.auth.helper import ClarifaiAuthHelper
 from clarifai.modules.css import ClarifaiStreamlitCSS
-from stqdm import stqdm
 
 from utils.mosaic import download_urls
+from utils.api_utils import list_all_inputs
 
 ##########################################################
 ClarifaiStreamlitCSS.insert_default_css(st)
@@ -17,7 +16,6 @@ ClarifaiStreamlitCSS.insert_default_css(st)
 auth = ClarifaiAuthHelper.from_streamlit(st)
 stub = create_stub(auth)
 userDataObject = auth.get_user_app_id_proto()
-lister = ClarifaiResourceLister(stub, auth.user_id, auth.app_id, page_size=16)
 st.title("Grid Input Viewer")
 
 with st.form(key="data-inputs"):
@@ -34,18 +32,18 @@ if submitted:
 
   # Stream inputs from the app
   all_images = []
-  for inp in stqdm(
-      lister.inputs_generator(), desc="Listing all the inputs in the app", total=mtotal):
+
+  #Change this function with list_inputs once per_page filter arguement added with new SDK.
+  images_response = list_all_inputs(userDataObject) 
+  for inp in images_response.inputs:
     if inp.data.image is not None:
       all_images.append(inp.data.image)
     if len(all_images) >= mtotal:
       break
 
   url_list = [im.url for im in all_images if im.url != ""]
-
   filteredImages = [tup[1] for tup in download_urls(url_list)]
 
-  print(filteredImages)
   # caption = [] # your caption here
   cols = cycle(
       st.columns(4))  # st.columns here since it is out of beta at the time I'm writing this

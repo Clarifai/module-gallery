@@ -1,11 +1,35 @@
+import streamlit as st
 from clarifai_grpc.grpc.api import resources_pb2, service_pb2
 from clarifai_grpc.grpc.api.status import status_code_pb2
+from clarifai.client.auth.helper import ClarifaiAuthHelper
+from clarifai.client.auth import create_stub
+from clarifai.client.model import Model
 from google.protobuf import json_format
-import streamlit as st
 
+auth = ClarifaiAuthHelper.from_streamlit(st)
+stub = create_stub(auth)
+userDataObject = auth.get_user_app_id_proto()
 
 def concept_key(concept):
   return "%s (%s)" % (concept.id, concept.name)
+
+
+def concept_list(userDataObject):
+   list_concepts_response = stub.ListConcepts(
+    service_pb2.ListConceptsRequest(
+       user_app_id=userDataObject)
+    )
+   if list_concepts_response.status.code != status_code_pb2.SUCCESS:
+    print(list_concepts_response.status)
+    raise Exception("List concept failed, status: " + list_concepts_response.status.description)
+
+   return list_concepts_response
+
+def list_all_inputs(userDataObject):
+  response = stub.ListInputs(
+    service_pb2.ListInputsRequest(user_app_id=userDataObject, per_page=16))
+  
+  return response
 
 def show_error(response, request_name):
   st.error(f"There was an error with your request to {request_name}")
@@ -45,39 +69,37 @@ def get_annotations_for_input_batch(stub, userDataObject, metadata, inputs):
 def predict_from_image(stub, metadata, img_bytes, user_id, app_id, model_id, version_id):
   '''
       '''
-  request = service_pb2.PostModelOutputsRequest(
-      user_app_id=resources_pb2.UserAppIDSet(user_id=user_id, app_id=app_id),
-      # This is the model ID of a publicly available General model. You may use any other public or custom model ID.
-      model_id=model_id,
-      inputs=[
-          resources_pb2.Input(data=resources_pb2.Data(image=resources_pb2.Image(base64=img_bytes)))
-      ])
+  model_obj = Model(model_id=model_id, user_id=user_id, app_id=app_id)
   if version_id is not None:
-    request.version_id = version_id
+    model_obj.model_version.id=version_id
 
-  response = stub.PostModelOutputs(request, metadata=metadata)
-  # print(response)
-  if response.status.code != status_code_pb2.SUCCESS:
-    show_error(response,"PostModelOutputs")
+  try:
+      response = model_obj.predict_by_bytes(
+      img_bytes,
+      "image")
 
+  except Exception as e:
+      st.error(f"Model predict error : {e} ")
+      st.stop()
+
+  #st.write(f"response for predict by image:{response}")
   return response
 
 def predict_from_text(stub, metadata, text, user_id, app_id, model_id, version_id):
   '''
       '''
-  request = service_pb2.PostModelOutputsRequest(
-      user_app_id=resources_pb2.UserAppIDSet(user_id=user_id, app_id=app_id),
-      # This is the model ID of a publicly available General model. You may use any other public or custom model ID.
-      model_id=model_id,
-      inputs=[
-          resources_pb2.Input(data=resources_pb2.Data(text=resources_pb2.Text(raw=text)))
-      ])
+  #sdk code using predict by bytes
+  model_obj = Model(model_id=model_id, user_id=user_id, app_id=app_id)
   if version_id is not None:
-    request.version_id = version_id
+    model_obj.model_version.id=version_id
 
-  response = stub.PostModelOutputs(request, metadata=metadata)
-  # print(response)
-  if response.status.code != status_code_pb2.SUCCESS:
-    show_error(response,"PostModelOutputs")
+  try:
+      response = model_obj.predict_by_bytes(bytes(
+      text, 'utf-8'),
+      "text")
+
+  except Exception as e:
+      st.error(f"Model predict error : {e} ")
+      st.stop()
 
   return response

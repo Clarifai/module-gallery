@@ -2,8 +2,8 @@ import altair as alt
 import numpy as np
 import pandas as pd
 import streamlit as st
-from clarifai.auth.helper import ClarifaiAuthHelper
-from clarifai.client import create_stub
+from clarifai.client.auth import create_stub
+from clarifai.client.auth.helper import ClarifaiAuthHelper
 from clarifai.modules.css import ClarifaiStreamlitCSS
 from clarifai.urls.helper import ClarifaiUrlHelper
 from google.protobuf import json_format

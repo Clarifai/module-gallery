@@ -2,17 +2,12 @@ import altair as alt
 import numpy as np
 import pandas as pd
 import streamlit as st
-from clarifai.auth.helper import ClarifaiAuthHelper
-from clarifai.client import create_stub
 from clarifai.modules.css import ClarifaiStreamlitCSS
 from vega_datasets import data
 
 ClarifaiStreamlitCSS.insert_default_css(st)
 
 # This must be within the display() function.
-auth = ClarifaiAuthHelper.from_streamlit(st)
-stub = create_stub(auth)
-userDataObject = auth.get_user_app_id_proto()
 st.title("Plotting Fun")
 
 # Generating Data
