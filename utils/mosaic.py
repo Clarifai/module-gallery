@@ -58,7 +58,7 @@ def average_colour(image):
 
 def urls_to_mosaic(url_list):
 
-  count = 0
+  pass
 
   urls_shuf = url_list[:100]  # 100 max
   random.seed(12345)

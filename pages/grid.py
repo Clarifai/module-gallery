@@ -6,8 +6,8 @@ from clarifai.client.auth import create_stub
 from clarifai.client.auth.helper import ClarifaiAuthHelper
 from clarifai.modules.css import ClarifaiStreamlitCSS
 
-from utils.mosaic import download_urls
 from utils.api_utils import list_all_inputs
+from utils.mosaic import download_urls
 
 ##########################################################
 ClarifaiStreamlitCSS.insert_default_css(st)
@@ -34,7 +34,7 @@ if submitted:
   all_images = []
 
   #Change this function with list_inputs once per_page filter arguement added with new SDK.
-  images_response = list_all_inputs(userDataObject) 
+  images_response = list_all_inputs(userDataObject)
   for inp in images_response.inputs:
     if inp.data.image is not None:
       all_images.append(inp.data.image)

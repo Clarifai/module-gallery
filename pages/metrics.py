@@ -1,12 +1,13 @@
 import altair as alt
 import pandas as pd
 import streamlit as st
-from clarifai.client.auth.helper import ClarifaiAuthHelper
 from clarifai.client.auth import create_stub
+from clarifai.client.auth.helper import ClarifaiAuthHelper
 from clarifai.modules.css import ClarifaiStreamlitCSS
 from stqdm import stqdm
 
-from utils.api_utils import concept_key, get_annotations_for_input_batch, concept_list, list_all_inputs
+from utils.api_utils import (concept_key, concept_list, get_annotations_for_input_batch,
+                             list_all_inputs)
 
 page_size = 16
 
@@ -20,7 +21,6 @@ userDataObject = auth.get_user_app_id_proto()
 # st.session_state['total'] = 0
 # st.session_state.get_input_count_response = {}
 
-
 st.title("App Data Metrics")
 with st.form(key="metrics-inputs"):
   st.text("This will compute a bunch of stats about your app. You ready?")
@@ -31,17 +31,17 @@ if submitted:
   # total = st.session_state['total']
 
   concepts = []
-  concept_response= concept_list(userDataObject)
+  concept_response = concept_list(userDataObject)
   #st.write(f"concept status:{getattr(concept_response,'concepts')}")
   if hasattr(concept_response, "concepts"):
-    for inp in getattr(concept_response,'concepts'):
+    for inp in getattr(concept_response, 'concepts'):
       concepts.append(inp)
-    
+
   concept_ids = [concept_key(c) for c in concepts]
 
   # List all the inputs
   all_inputs = []
-  input_response= list_all_inputs(userDataObject)
+  input_response = list_all_inputs(userDataObject)
   for inp in input_response.inputs:
     if inp is not None:
       all_inputs.append(inp)
@@ -134,7 +134,8 @@ if submitted:
   text = c.mark_text(dy=-5).encode(text='sum(count)')
   st.altair_chart(c + text, use_container_width=True)
 
-  base = alt.Chart(counts_melted).mark_arc().encode(theta=alt.Theta('concept', stack=True), color='concept')
+  base = alt.Chart(counts_melted).mark_arc().encode(
+      theta=alt.Theta('concept', stack=True), color='concept')
   pie = base.mark_arc(outerRadius=120)
   text = base.mark_text(radius=140, size=20).encode(text="sum(count)")
   st.altair_chart(pie + text, use_container_width=True)

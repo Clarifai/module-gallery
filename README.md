@@ -42,13 +42,13 @@ http://localhost:8501?user_id={user_id}&app_id={app_id}&pat={pat}=base={base}
 For a single page app all you need to implement is the app.py file. You're of course free to import any other python modules you build but they will all be used to render that single page. A single page app will still let `page=N` come in as a query param but it will be ignored.
 
 ### Building Multi-Page Apps
-This is now natively supported in streamlit since version 1.10.0. See https://docs.streamlit.io/library/get-started/multipage-apps for more details. 
+This is now natively supported in streamlit since version 1.10.0. See https://docs.streamlit.io/library/get-started/multipage-apps for more details.
 
 Note we add the following to `.streamlit/config.toml` so that the sidebar does not show by default:
 ```
 [ui]
 hideSidebarNav=true
-``` 
+```
 
 ## Using Clarifai CSS Styles
 

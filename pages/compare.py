@@ -73,10 +73,8 @@ if submitted:  # this blocks here until the person hits the submit button.
     if var == '':
       st.error("You must provide all the fields in the form before submitting.")
       st.stop()
-  response1 = predict_from_image(stub, auth.metadata, img_b, USER_ID1, APP_ID1, MODEL_ID1,
-                                 VERSION_ID1)
-  response2 = predict_from_image(stub, auth.metadata, img_b, USER_ID2, APP_ID2, MODEL_ID2,
-                                 VERSION_ID2)
+  response1 = predict_from_image(img_b, USER_ID1, APP_ID1, MODEL_ID1, VERSION_ID1)
+  response2 = predict_from_image(img_b, USER_ID2, APP_ID2, MODEL_ID2, VERSION_ID2)
 
   json_string1 = json_format.MessageToJson(response1, preserving_proto_field_name=True)
   json_string2 = json_format.MessageToJson(response1, preserving_proto_field_name=True)
