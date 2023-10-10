@@ -2,7 +2,6 @@ from itertools import cycle
 
 import numpy as np
 import streamlit as st
-from clarifai.client.auth import create_stub
 from clarifai.client.auth.helper import ClarifaiAuthHelper
 from clarifai.modules.css import ClarifaiStreamlitCSS
 
@@ -14,7 +13,6 @@ ClarifaiStreamlitCSS.insert_default_css(st)
 
 # This must be within the display() function.
 auth = ClarifaiAuthHelper.from_streamlit(st)
-stub = create_stub(auth)
 userDataObject = auth.get_user_app_id_proto()
 st.title("Grid Input Viewer")
 

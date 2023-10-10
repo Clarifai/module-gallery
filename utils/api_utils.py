@@ -1,7 +1,6 @@
 import streamlit as st
 from clarifai.client.auth import create_stub
 from clarifai.client.auth.helper import ClarifaiAuthHelper
-from clarifai.client.model import Model
 from clarifai_grpc.grpc.api import service_pb2
 from clarifai_grpc.grpc.api.status import status_code_pb2
 from google.protobuf import json_format
@@ -66,38 +65,3 @@ def get_annotations_for_input_batch(stub, userDataObject, metadata, inputs):
       print(annotation_object)
 
   return annotations
-
-
-def predict_from_image(img_bytes, user_id, app_id, model_id, version_id):
-  '''
-      '''
-  model_obj = Model(model_id=model_id, user_id=user_id, app_id=app_id)
-  if version_id is not None:
-    model_obj.model_version.id = version_id
-
-  try:
-    response = model_obj.predict_by_bytes(img_bytes, "image")
-
-  except Exception as e:
-    st.error(f"Model predict error : {e} ")
-    st.stop()
-
-  #st.write(f"response for predict by image:{response}")
-  return response
-
-
-def predict_from_text(text, user_id, app_id, model_id, version_id):
-
-  #sdk code using predict by bytes
-  model_obj = Model(model_id=model_id, user_id=user_id, app_id=app_id)
-  if version_id is not None:
-    model_obj.model_version.id = version_id
-
-  try:
-    response = model_obj.predict_by_bytes(bytes(text, 'utf-8'), "text")
-
-  except Exception as e:
-    st.error(f"Model predict error : {e} ")
-    st.stop()
-
-  return response
