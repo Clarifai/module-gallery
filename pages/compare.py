@@ -2,23 +2,16 @@ import altair as alt
 import numpy as np
 import pandas as pd
 import streamlit as st
-from clarifai.auth.helper import ClarifaiAuthHelper
-from clarifai.client import create_stub
+from clarifai.client.model import Model
 from clarifai.modules.css import ClarifaiStreamlitCSS
-from clarifai.urls.helper import ClarifaiUrlHelper
 from google.protobuf import json_format
 from PIL import Image
-
-from utils.api_utils import predict_from_image
 
 ##########################################################
 
 ClarifaiStreamlitCSS.insert_default_css(st)
 
 # This must be within the display() function.
-auth = ClarifaiAuthHelper.from_streamlit(st)
-stub = create_stub(auth)
-userDataObject = auth.get_user_app_id_proto()
 st.title("Compare Two Classification Models")
 
 st.write("This is a Streamlit app that predict objects and semantic concepts within an image.")
@@ -50,33 +43,13 @@ with st.form(key="model-compare"):
 
 if submitted:  # this blocks here until the person hits the submit button.
 
-  USER_ID1, APP_ID1, resource_type, MODEL_ID1, VERSION_ID1 = ClarifaiUrlHelper.split_clarifai_url(
-      url1)
-  if resource_type != "models":
-    st.error(
-        "Provided url must point to a 'models' resource like https://clarifai.com/{user_id}/{app_id}/models/{resource_id}/model_versions/{resource_version_id}"
-    )
-    st.stop()
+  if len(url1) > 0 and len(url2) > 0:
+    response1 = Model(url1).predict_by_bytes(img_b, "image")
+    response2 = Model(url2).predict_by_bytes(img_b, "image")
 
-  USER_ID2, APP_ID2, resource_type, MODEL_ID2, VERSION_ID2 = ClarifaiUrlHelper.split_clarifai_url(
-      url2)
-  if resource_type != "models":
-    st.error(
-        "Provided url must point to a 'models' resource like https://clarifai.com/{user_id}/{app_id}/models/{resource_id}/model_versions/{resource_version_id}"
-    )
+  else:
+    st.error("You must provide all the fields in the form before submitting.")
     st.stop()
-
-  # NOTE(zeiler): not sure if this is the best way to validate a form.
-  for var in [
-      USER_ID1, USER_ID2, APP_ID1, APP_ID2, MODEL_ID1, MODEL_ID2, VERSION_ID1, VERSION_ID2
-  ]:
-    if var == '':
-      st.error("You must provide all the fields in the form before submitting.")
-      st.stop()
-  response1 = predict_from_image(stub, auth.metadata, img_b, USER_ID1, APP_ID1, MODEL_ID1,
-                                 VERSION_ID1)
-  response2 = predict_from_image(stub, auth.metadata, img_b, USER_ID2, APP_ID2, MODEL_ID2,
-                                 VERSION_ID2)
 
   json_string1 = json_format.MessageToJson(response1, preserving_proto_field_name=True)
   json_string2 = json_format.MessageToJson(response1, preserving_proto_field_name=True)
@@ -88,8 +61,9 @@ if submitted:  # this blocks here until the person hits the submit button.
 
   st.header("Predicted Concepts")
   cols = st.columns(2)
-  cols[0].write(f"{USER_ID1} / {APP_ID1} / models / {MODEL_ID1} / versions / {VERSION_ID1}")
-  cols[1].write(f"{USER_ID2} / {APP_ID2} / models / {MODEL_ID2} / versions / {VERSION_ID2}")
+
+  cols[0].write(url1[(url1.find('.com/') + len('.com/')):])
+  cols[1].write(url2[(url2.find('.com/') + len('.com/')):])
   concept_names = []
   concept_confidences = []
   for concept in response1.outputs[0].data.concepts:

@@ -58,13 +58,13 @@ def average_colour(image):
 
 def urls_to_mosaic(url_list):
 
-  count = 0
+  pass
 
   urls_shuf = url_list[:100]  # 100 max
   random.seed(12345)
   random.shuffle(urls_shuf)
 
-  print(url_list)
+  #print(f"this is the url_list{url_list}")
 
   PIL_cropped = download_urls(urls_shuf)
 

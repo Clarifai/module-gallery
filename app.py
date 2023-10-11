@@ -2,8 +2,7 @@ import glob
 import os
 
 import streamlit as st
-## Import in the Clarifai gRPC based objects needed
-from clarifai_utils.modules.css import ClarifaiStreamlitCSS
+from clarifai.modules.css import ClarifaiStreamlitCSS
 
 ########################
 # Required in every Clarifai streamlit app
