@@ -1,4 +1,4 @@
-Pillow==9.2.0
+Pillow==10.0.1
 altair==4.2.0
 clarifai==9.8.1
 numpy==1.23.1
