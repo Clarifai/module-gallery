@@ -1,7 +1,6 @@
 import altair as alt
 import pandas as pd
 import streamlit as st
-from clarifai.client.auth import create_stub
 from clarifai.client.auth.helper import ClarifaiAuthHelper
 from clarifai.modules.css import ClarifaiStreamlitCSS
 from stqdm import stqdm
@@ -15,7 +14,6 @@ ClarifaiStreamlitCSS.insert_default_css(st)
 
 # This must be within the display() function.
 auth = ClarifaiAuthHelper.from_streamlit(st)
-stub = create_stub(auth)
 userDataObject = auth.get_user_app_id_proto()
 
 # st.session_state['total'] = 0
@@ -31,7 +29,7 @@ if submitted:
   # total = st.session_state['total']
 
   concepts = []
-  concept_response = concept_list(userDataObject)
+  concept_response = concept_list(app_id=userDataObject.app_id, user_id=userDataObject.user_id)
   #st.write(f"concept status:{getattr(concept_response,'concepts')}")
   if hasattr(concept_response, "concepts"):
     for inp in getattr(concept_response, 'concepts'):
@@ -41,16 +39,15 @@ if submitted:
 
   # List all the inputs
   all_inputs = []
-  input_response = list_all_inputs(userDataObject)
-  for inp in input_response.inputs:
+  input_response = list_all_inputs(app_id=userDataObject.app_id, user_id=userDataObject.user_id)
+  for inp in input_response:
     if inp is not None:
       all_inputs.append(inp)
-
   # Stream inputs from the app
   all_annotations = []
   for i in stqdm(range(0, len(all_inputs), page_size), desc="Loading annotations for inputs"):
     batch = all_inputs[i:i + page_size]
-    annotations = get_annotations_for_input_batch(stub, userDataObject, auth.metadata, batch)
+    annotations = get_annotations_for_input_batch(userDataObject=userDataObject, inputs=batch)
     all_annotations.extend(annotations)
   ###################
 

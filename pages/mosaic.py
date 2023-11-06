@@ -32,8 +32,8 @@ if submitted:
   # Stream inputs from the app
   all_images = []
   #Change this function with list_inputs once per_page filter arguement added with new SDK.
-  resp = list_all_inputs(userDataObject)
-  for inp in resp.inputs:
+  resp = list_all_inputs(user_id=userDataObject.user_id, app_id=userDataObject.app_id)
+  for inp in resp:
     if inp.data.image is not None:
       all_images.append(inp.data.image)
     if len(all_images) >= mtotal:

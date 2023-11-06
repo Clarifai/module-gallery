@@ -1,12 +1,10 @@
 import streamlit as st
-from clarifai.client.auth import create_stub
+from clarifai.client.app import App
 from clarifai.client.auth.helper import ClarifaiAuthHelper
-from clarifai_grpc.grpc.api import service_pb2
-from clarifai_grpc.grpc.api.status import status_code_pb2
+from clarifai.client.input import Inputs
 from google.protobuf import json_format
 
 auth = ClarifaiAuthHelper.from_streamlit(st)
-stub = create_stub(auth)
 userDataObject = auth.get_user_app_id_proto()
 
 
@@ -14,21 +12,25 @@ def concept_key(concept):
   return "%s (%s)" % (concept.id, concept.name)
 
 
-def concept_list(userDataObject):
-  list_concepts_response = stub.ListConcepts(
-      service_pb2.ListConceptsRequest(user_app_id=userDataObject, per_page=16))
-  if list_concepts_response.status.code != status_code_pb2.SUCCESS:
-    print(list_concepts_response.status)
-    raise Exception("List concept failed, status: " + list_concepts_response.status.description)
+def concept_list(user_id, app_id):
+  app_obj = App(app_id=app_id, user_id=user_id)
+  try:
+    list_concepts_response = list(app_obj.list_concepts(per_page=100))
+    return list_concepts_response
 
-  return list_concepts_response
+  except Exception as e:
+    st.error(f"List concept failed, status: {e}")
 
 
-def list_all_inputs(userDataObject):
-  response = stub.ListInputs(
-      service_pb2.ListInputsRequest(user_app_id=userDataObject, per_page=16))
-
-  return response
+def list_all_inputs(user_id, app_id):
+  input_obj = Inputs(user_id=user_id, app_id=app_id)
+  try:
+    response = input_obj.list_inputs(
+        input_type="image", per_page=100
+    )  #Per_page is set to 100 since no of images to display in the portal is limited to 100
+    return response
+  except Exception as e:
+    st.error(f"There was an error with your request to list inputs: {e}")
 
 
 def show_error(response, request_name):
@@ -39,29 +41,21 @@ def show_error(response, request_name):
   st.stop()
 
 
-def get_annotations_for_input_batch(stub, userDataObject, metadata, inputs):
+def get_annotations_for_input_batch(userDataObject, inputs):
 
   annotations = []
   if len(inputs) == 0:
     return annotations
-  input_ids = [inp.id for inp in inputs]
+  input_obj = Inputs(user_id=userDataObject.user_id, app_id=userDataObject.app_id)
+  try:
+    list_annotations_response = list(input_obj.list_annotations(batch_input=inputs))
+  except Exception as e:
+    st.error(f"There was an error with your request to list annotations: {e}")
+    st.stop()
 
-  list_annotations_response = stub.ListAnnotations(
-      service_pb2.ListAnnotationsRequest(
-          user_app_id=
-          userDataObject,  # The userDataObject is created in the overview and is required when using a PAT
-          input_ids=input_ids,
-          per_page=1000,  # FIXME(zeiler): this needs proper pagination.
-      ),
-      metadata=metadata)
-  if list_annotations_response.status.code != status_code_pb2.SUCCESS:
-    show_error(list_annotations_response, "ListAnnotations")
-  for annotation_object in list_annotations_response.annotations:
+  for annotation_object in list_annotations_response:
     if len(annotation_object.data.concepts) > 0 or len(annotation_object.data.regions) > 0:
       # print(annotation_object)
       annotations.append(annotation_object)
-    else:
-      print("ZZZZZZZZZZZZZZZZZZ")
-      print(annotation_object)
 
   return annotations
