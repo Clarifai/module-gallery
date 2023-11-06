@@ -22,11 +22,11 @@ def concept_list(user_id, app_id):
     st.error(f"List concept failed, status: {e}")
 
 
-def list_all_inputs(user_id, app_id):
+def list_all_inputs(user_id, app_id, per_page : int = 100):
   input_obj = Inputs(user_id=user_id, app_id=app_id)
   try:
     response = input_obj.list_inputs(
-        input_type="image", per_page=100
+        input_type="image", per_page=per_page
     )  #Per_page is set to 100 since no of images to display in the portal is limited to 100
     return response
   except Exception as e:
