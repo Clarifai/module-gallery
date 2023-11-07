@@ -45,5 +45,5 @@ if submitted:
     st.write("Please add image inputs into your app !")
 
   else:
-    mosaic = urls_to_mosaic(url_list)
+    mosaic = urls_to_mosaic(url_list, auth.pat)
     st.image(mosaic)
