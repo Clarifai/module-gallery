@@ -40,7 +40,7 @@ if submitted:
       break
 
   url_list = [im.url for im in all_images if im.url != ""]
-  filteredImages = [tup[1] for tup in download_urls(url_list)]
+  filteredImages = [tup[1] for tup in download_urls(url_list, auth.pat)]
 
   # caption = [] # your caption here
   cols = cycle(

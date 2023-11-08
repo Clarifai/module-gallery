@@ -1,10 +1,10 @@
 import math
 import random
 import urllib.request
-
 import numpy as np
 from PIL import Image
 from stqdm import stqdm
+import streamlit as st
 
 
 def crop_image(img):
@@ -56,7 +56,8 @@ def average_colour(image):
   return tuple(colour_tuple)
 
 
-def urls_to_mosaic(url_list):
+@st.cache_data
+def urls_to_mosaic(url_list, pat=''):
 
   pass
 
@@ -66,7 +67,7 @@ def urls_to_mosaic(url_list):
 
   #print(f"this is the url_list{url_list}")
 
-  PIL_cropped = download_urls(urls_shuf)
+  PIL_cropped = download_urls(urls_shuf, pat)
 
   # attempt to mosaic
   img_list = []
@@ -80,10 +81,10 @@ def urls_to_mosaic(url_list):
 
   columns = int(len(img_list) / rows)
 
-  print(columns)
-  print(width)
-  print(rows)
-  print(height)
+  # print(columns)
+  # print(width)
+  # print(rows)
+  # print(height)
 
   mosaic = Image.new('RGB', (columns * width, rows * height))
 
@@ -97,15 +98,18 @@ def urls_to_mosaic(url_list):
   return np.array(mosaic)
 
 
-def download_urls(url_list):
+@st.cache_data
+def download_urls(url_list, pat=''):
   PIL_concept_images = []
   for i, url in stqdm(enumerate(url_list), desc="Downloading images"):
-    #   try:
-    with urllib.request.urlopen(url) as fd:
-      im = Image.open(fd)
-    PIL_concept_images.append(im)
-    #   except:
-    #     continue
+    try:
+      hdr = f"Bearer {pat}"
+      req = urllib.request.Request(url, headers={"Authorization": hdr, 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'})
+      with urllib.request.urlopen(req) as fd:
+        im = Image.open(fd)
+      PIL_concept_images.append(im)
+    except:
+      continue
 
   # crop
   PIL_cropped = []
